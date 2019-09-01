@@ -14,6 +14,7 @@ class App extends Component {
   state = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
     alert: null,
   };
@@ -24,6 +25,21 @@ class App extends Component {
     );
     this.setState({ users: res.data, loading: false });
   }
+  getUser = async login => {
+    this.setState({ loading: true });
+    const res = await axios.get(
+      `https://api.github.com/users/${login}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`,
+    );
+    this.setState({ user: res.data, loading: false });
+  };
+  getUserRepos = async login => {
+    this.setState({ loading: true });
+    const res = await axios.get(
+      `https://api.github.com/users/${login}/repos?per_page=5&sort=created:asc&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`,
+    );
+    this.setState({ repos: res.data, loading: false });
+  };
+
   searchUsers = async text => {
     this.setState({ loading: true });
     const res = await axios.get(
@@ -41,16 +57,8 @@ class App extends Component {
     setTimeout(() => this.setState({ alert: null }), 5000);
   };
 
-  getUser = async login => {
-    this.setState({ loading: true });
-    const res = await axios.get(
-      `https://api.github.com/users/${login}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`,
-    );
-    this.setState({ user: res.data, loading: false });
-  };
-
   render() {
-    const { users, loading, user } = this.state;
+    const { users, user, repos, loading } = this.state;
     return (
       <Router>
         <div className="App">
@@ -79,7 +87,14 @@ class App extends Component {
                 path="/user/:login"
                 render={props => (
                   <Fragment>
-                    <User {...props} getUser={this.getUser} user={user} loading={loading} />
+                    <User
+                      {...props}
+                      getUser={this.getUser}
+                      getUserRepos={this.getUserRepos}
+                      user={user}
+                      repos={repos}
+                      loading={loading}
+                    />
                   </Fragment>
                 )}
               />
