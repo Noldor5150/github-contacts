@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const Search = ({ showClear, searchUsers, clearUsers, setAlert }) => {
   const [text, setText] = useState('');
@@ -26,6 +27,12 @@ const Search = ({ showClear, searchUsers, clearUsers, setAlert }) => {
       )}
     </div>
   );
+};
+Search.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+  searchUsers: PropTypes.func.isRequired,
+  clearUsers: PropTypes.func.isRequired,
+  showClear: PropTypes.bool.isRequired,
 };
 
 export default Search;
